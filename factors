@@ -1,11 +1,13 @@
 #!/usr/bin/python3
+
 """ Factorize digits into an outcome of two smaller digits """
 import sys
+import math
 
 
 def factorize(digit):
     """ Factorize a digit into two smaller digits """
-    for elem1 in range(2, int(digit ** 0.5) + 1):
+    for elem1 in range(2, int(math.sqrt(digit)) + 1):
         if digit % elem1 == 0:
             elem2 = digit // elem1
             return elem2, elem1
