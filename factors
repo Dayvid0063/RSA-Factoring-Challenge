@@ -2,36 +2,27 @@
 
 """ Factorize digits into an outcome of two smaller digits """
 import sys
-import math
 
 
-def gcd(a, b):
-    while b:
-        a, b = b, a % b
-    return a
+PRIMES = [
+        2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
+        31, 37 ]
 
-def p_rho(n):
-    if n % 2 == 0:
-        return 2
-
-    x = 2
-    y = 2
-    d = 1
-
-    f = lambda x: (x**2 + 1) % n
-
-    while d == 1:
-        x = f(x)
-        y = f(f(y))
-        d = gcd(abs(x - y), n)
-
-    return d
+def least_prime(n):
+    """Find the smallest prime factor of n"""
+    for prime in PRIMES:
+        if n % prime == 0:
+            return prime
+        if prime * prime > n:
+            return n
+    return n
 
 def factorize(digit):
+    """Factorize a digit into two smaller digits"""
     if digit <= 1:
         return digit, 1
 
-    elem = p_rho(digit)
+    elem = least_prime(digit)
     if elem == digit:
         return digit, 1
 
@@ -39,6 +30,7 @@ def factorize(digit):
     return fac, elem
 
 def factorize_file(path):
+    """Factorize digits in the provided file into two smaller digits"""
     try:
         with open(path) as f:
             for line in f:
@@ -56,3 +48,4 @@ if __name__ == "__main__":
 
     factors = sys.argv[1]
     factorize_file(factors)
+
