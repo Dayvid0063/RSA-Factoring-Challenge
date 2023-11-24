@@ -1,15 +1,13 @@
 #!/usr/bin/python3
 
-""" Factorize digits into an outcome of two smaller digits """
+"""Factorize digits into an outcome of two smaller digits"""
 import sys
 
 
-PRIMES = [
-        2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
-        31, 37 ]
+PRIMES = [2, 3, 5, 7, 11, 13, 17]
 
 def least_prime(n):
-    """Find the smallest prime factor of n"""
+    """search the smallest prime factor of n"""
     for prime in PRIMES:
         if n % prime == 0:
             return prime
@@ -48,4 +46,3 @@ if __name__ == "__main__":
 
     factors = sys.argv[1]
     factorize_file(factors)
-
