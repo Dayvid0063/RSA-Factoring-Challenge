@@ -4,11 +4,11 @@
 import sys
 
 
-PRIMES = [2, 3, 5, 7, 11, 13, 17]
+P = [2, 3, 5, 7]
 
 def least_prime(n):
-    """search the smallest prime factor of n"""
-    for prime in PRIMES:
+    """search the smallest prime elem of n"""
+    for prime in P:
         if n % prime == 0:
             return prime
         if prime * prime > n:
