@@ -2,6 +2,7 @@
 
 """Factorize digits into an outcome of two smaller digits"""
 import sys
+import time
 
 
 P = [2, 3, 5, 7]
@@ -35,6 +36,10 @@ def factorize_file(path):
                 number = int(line.strip())
                 elem2, elem1 = factorize(number)
                 print(f"{number}={elem2}*{elem1}")
+
+                if time.time() - start_time > 5:
+                    print("Execution time exceeded the limit.")
+                    break
     except FileNotFoundError:
         print(f"File '{path}' not found.")
     except ValueError:
@@ -45,4 +50,7 @@ if __name__ == "__main__":
         sys.exit(f"Usage: {sys.argv[0]} <path>")
 
     factors = sys.argv[1]
+
+    start_time = time.time()
+
     factorize_file(factors)
