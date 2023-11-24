@@ -1,0 +1,35 @@
+#!/usr/bin/python3
+
+""" Factorize digits into an outcome of two smaller digits """
+import sys
+
+
+def factorize(digit):
+    """ Factorize a digit into two smaller digits """
+    elem1 = 2
+    while digit % elem1:
+        if elem1 <= digit:
+            elem1 += 1
+
+    elem2 = digit // elem1
+    return elem2, elem1
+
+def factorize_file(path):
+    """ Factorize digits in the provided file into two smaller digits """
+    try:
+        with open(path) as f:
+            for line in f:
+                number = int(line.strip())
+                elem2, elem1 = factorize(number)
+                print(f"{number}={elem2}*{elem1}")
+    except FileNotFoundError:
+        print(f"File '{path}' not found.")
+    except ValueError:
+        print("Invalid data in the file.")
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        sys.exit(f"Usage: {sys.argv[0]} <file_path>")
+
+    filename = sys.argv[1]
+    factorize_file(filename)
