@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-
 """ Factorize digits into an outcome of two smaller digits """
 import sys
 
@@ -29,7 +28,7 @@ def factorize_file(path):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        sys.exit(f"Usage: {sys.argv[0]} <file_path>")
+        sys.exit(f"Usage: {sys.argv[0]} <path>")
 
-    filename = sys.argv[1]
-    factorize_file(filename)
+    factors = sys.argv[1]
+    factorize_file(factors)
