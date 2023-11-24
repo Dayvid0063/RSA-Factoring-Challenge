@@ -5,17 +5,40 @@ import sys
 import math
 
 
-def factorize(digit):
-    """ Factorize a digit into two smaller digits """
-    for elem1 in range(2, int(math.sqrt(digit)) + 1):
-        if digit % elem1 == 0:
-            elem2 = digit // elem1
-            return elem2, elem1
-    return digit, 1
+def gcd(a, b):
+    while b:
+        a, b = b, a % b
+    return a
 
+def p_rho(n):
+    if n % 2 == 0:
+        return 2
+
+    x = 2
+    y = 2
+    d = 1
+
+    f = lambda x: (x**2 + 1) % n
+
+    while d == 1:
+        x = f(x)
+        y = f(f(y))
+        d = gcd(abs(x - y), n)
+
+    return d
+
+def factorize(digit):
+    if digit <= 1:
+        return digit, 1
+
+    elem = p_rho(digit)
+    if elem == digit:
+        return digit, 1
+
+    fac = digit // elem
+    return fac, elem
 
 def factorize_file(path):
-    """ Factorize digits in the provided file into two smaller digits """
     try:
         with open(path) as f:
             for line in f:
