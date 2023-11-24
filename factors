@@ -1,0 +1,29 @@
+#!/usr/bin/python3
+"""resolve these numbers in a file to the outcome of 2 small numbers"""
+from sys import argv
+
+
+def factorize(checking_digit):
+	""""searching for two small numbers that multiply to make a number"""
+	     u = 2
+
+	     if checking_digit < 2:
+	     return
+
+	     while checking_digit % u:
+	     u += 1
+	     print("{:.0f}={:.0f}*{:.0f}".format(checking_digit, checking_digit / u, u))
+
+	     if len(argv) != 2:
+exit()
+
+	try:
+	with open(argv[1]) as file:
+line = file.readline()
+
+	while line != "":
+	checking_digit = int(line.split('\n')[0])
+	factorize(checking_digit)
+line = file.readline()
+	except:
+	pass
