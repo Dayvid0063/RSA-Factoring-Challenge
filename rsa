@@ -1,0 +1,54 @@
+#!/usr/bin/python3
+
+import sys
+import time
+import math
+
+
+def prime_digit(n):
+    """Checks if a digit is prime"""
+    if n <= 1:
+        return False
+    for u in range(2, int(math.sqrt(n)) + 1):
+        if n % u == 0:
+            return False
+    return True
+
+def search_primes(n):
+    """Searches for two prime factors that multiply to n"""
+    for u in range(2, n):
+        if n % u == 0 and prime_digit(u):
+            v = n // u
+            if prime_digit(v):
+                return min(u, v), max(u, v)
+    return None, None
+
+def factorize_file(path):
+    """Factorizes digits in the provided file into two prime factors"""
+    try:
+        with open(path) as f:
+            for line in f:
+                n = int(line.strip())
+                p, q = search_primes(n)
+                if p is not None and q is not None:
+                    print(f"{n}={p}*{q}")
+                else:
+                    print(f"Couldn't find two prime factors for {n}")
+
+                if time.time() - start_time > 5:
+                    print("Execution time exceeded the limit.")
+                    break
+    except FileNotFoundError:
+        print(f"File '{path}' not found.")
+    except ValueError:
+        print("Invalid data in the file.")
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        sys.exit(f"Usage: {sys.argv[0]} <path>")
+
+    factors = sys.argv[1]
+
+    start_time = time.time()
+
+    factorize_file(factors)

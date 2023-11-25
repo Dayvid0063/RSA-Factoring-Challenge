@@ -5,11 +5,11 @@ import sys
 import time
 
 
-P = [2, 3, 5, 7]
+PRIMES = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]
 
 def least_prime(n):
-    """search the smallest prime elem of n"""
-    for prime in P:
+    """Find the smallest prime factor of n"""
+    for prime in PRIMES:
         if n % prime == 0:
             return prime
         if prime * prime > n:
