@@ -33,9 +33,9 @@ def factorize_file(path):
     try:
         with open(path) as f:
             for line in f:
-                number = int(line.strip())
-                elem2, elem1 = factorize(number)
-                print(f"{number}={elem2}*{elem1}")
+                n = int(line.strip())
+                p, q = factorize(n)
+                print(f"{n}={p}*{q}")
 
                 if time.time() - start_time > 5:
                     print("Execution time exceeded the limit.")
