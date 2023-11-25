@@ -3,25 +3,36 @@
 import sys
 import time
 import math
+import random
 
 
-def prime_digit(n):
-    """Checks if a digit is prime"""
-    if n <= 1:
-        return False
-    for u in range(2, int(math.sqrt(n)) + 1):
-        if n % u == 0:
-            return False
-    return True
+def gcd(a, b):
+    """solve the largest divisor of a and b"""
+    while b:
+        a, b = b, a % b
+    return a
 
-def search_primes(n):
-    """Searches for two prime factors that multiply to n"""
-    for u in range(2, n):
-        if n % u == 0 and prime_digit(u):
-            v = n // u
-            if prime_digit(v):
-                return min(u, v), max(u, v)
-    return None, None
+
+def pollard_rho(n):
+    """Pollard's rho algorithm for factorizing a number"""
+    if n % 2 == 0:
+        return 2, n // 2
+
+    x = random.randint(1, n - 1)
+    y = x
+    c = random.randint(1, n - 1)
+    d = 1
+
+    def f(val):
+        return (val * val + c) % n
+
+    while d == 1:
+        x = f(x)
+        y = f(f(y))
+        d = gcd(abs(x - y), n)
+
+    return d, n // d
+
 
 def factorize_file(path):
     """Factorizes digits in the provided file into two prime factors"""
@@ -29,7 +40,7 @@ def factorize_file(path):
         with open(path) as f:
             for line in f:
                 n = int(line.strip())
-                p, q = search_primes(n)
+                p, q = pollard_rho(n)
                 if p is not None and q is not None:
                     print(f"{n}={p}*{q}")
                 else:
@@ -42,6 +53,7 @@ def factorize_file(path):
         print(f"File '{path}' not found.")
     except ValueError:
         print("Invalid data in the file.")
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
