@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 
 import sys
-import time
 import math
 
+
 def prime_digit(num):
-    """search if a digit is prime"""
+    """Check if a digit is prime"""
     if num < 2:
         return False
     for k in range(2, int(math.sqrt(num)) + 1):
@@ -14,10 +14,24 @@ def prime_digit(num):
     return True
 
 def gcd(a, b):
-    """search the largest divisor of a and b"""
+    """Calculate the greatest common divisor of two numbers"""
     while b:
         a, b = b, a % b
     return a
+
+def pollards_p_minus_1(n):
+    """Pollard's p-1 algorithm for factorizing a number"""
+    max_bound = 1000000
+    a = 2
+    for j in range(2, max_bound):
+        a = pow(a, j, n)
+        d = gcd(a - 1, n)
+        if 1 < d < n:
+            return d, n // d
+        if d == n:
+            break
+
+    return None, None
 
 def pollard_rho(n):
     """Pollard's rho algorithm for factorizing a number"""
@@ -41,11 +55,18 @@ def factorize_file(path):
     try:
         with open(path) as f:
             n = int(f.read().strip())
+
+            p, q = pollards_p_minus_1(n)
+            if p is not None and q is not None and prime_digit(p) and prime_digit(q):
+                print(f"{n}={p}*{q}")
+                return
+
             p, q = pollard_rho(n)
             if p is not None and q is not None and prime_digit(p) and prime_digit(q):
                 print(f"{n}={p}*{q}")
-            else:
-                print(f"Couldn't find two prime factors for {n}")
+                return
+
+            print(f"Couldn't find two prime factors for {n}")
     except FileNotFoundError:
         print("File not found.")
 
