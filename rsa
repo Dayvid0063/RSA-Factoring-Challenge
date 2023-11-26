@@ -4,10 +4,25 @@ import sys
 import time
 import random
 
+
 def gcd(a, b):
     while b:
         a, b = b, a % b
     return a
+
+def is_prime(n):
+    if n <= 1:
+        return False
+    if n <= 3:
+        return True
+    if n % 2 == 0 or n % 3 == 0:
+        return False
+    i = 5
+    while i * i <= n:
+        if n % i == 0 or n % (i + 2) == 0:
+            return False
+        i += 6
+    return True
 
 def rho_pollard(n):
     if n % 2 == 0:
@@ -27,7 +42,7 @@ def rho_pollard(n):
 
     return d if d != n else None
 
-def factorize(n):
+def get_prime_factors(n):
     factors = []
     while n > 1:
         factor = rho_pollard(n)
@@ -39,14 +54,22 @@ def factorize(n):
             break
     return factors
 
+def find_two_primes(n):
+    factors = get_prime_factors(n)
+    if len(factors) >= 2:
+        primes = [factor for factor in factors if is_prime(factor)]
+        if len(primes) >= 2:
+            return primes[:2]
+    return None
+
 def factorize_file(path):
     try:
         with open(path) as f:
             for line in f:
                 n = int(line.strip())
-                factors = factorize(n)
-                if len(factors) == 2 and all(is_prime(factor) for factor in factors):
-                    print(f"{n}={factors[0]}*{factors[1]}")
+                primes = find_two_primes(n)
+                if primes:
+                    print(f"{n}={primes[0]}*{primes[1]}")
                 else:
                     print("Unable to find two prime factors.")
                 if time.time() - start_time > 5:
@@ -56,20 +79,6 @@ def factorize_file(path):
         print(f"File '{path}' not found.")
     except ValueError:
         print("Invalid data in the file.")
-
-def is_prime(n):
-    if n <= 1:
-        return False
-    if n <= 3:
-        return True
-    if n % 2 == 0 or n % 3 == 0:
-        return False
-    i = 5
-    while i * i <= n:
-        if n % i == 0 or n % (i + 2) == 0:
-            return False
-        i += 6
-    return True
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
