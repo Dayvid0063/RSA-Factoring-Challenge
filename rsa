@@ -1,91 +1,32 @@
 #!/usr/bin/python3
 
+
 import sys
-import time
-import random
 
 
-def gcd(a, b):
-    while b:
-        a, b = b, a % b
-    return a
 
-def is_prime(n):
-    if n <= 1:
-        return False
-    if n <= 3:
-        return True
-    if n % 2 == 0 or n % 3 == 0:
-        return False
-    i = 5
-    while i * i <= n:
-        if n % i == 0 or n % (i + 2) == 0:
-            return False
-        i += 6
-    return True
-
-def rho_pollard(n):
-    if n % 2 == 0:
-        return 2
-
-    x = random.randint(1, n-1)
-    y = x
-    c = random.randint(1, n-1)
-    d = 1
-
-    f = lambda x: (x ** 2 + c) % n
-
-    while d == 1:
-        x = f(x)
-        y = f(f(y))
-        d = gcd(abs(x - y), n)
-
-    return d if d != n else None
-
-def get_prime_factors(n):
-    factors = []
-    while n > 1:
-        factor = rho_pollard(n)
-        if factor:
-            factors.append(factor)
-            n //= factor
-        else:
-            factors.append(n)
-            break
-    return factors
-
-def find_two_primes(n):
-    factors = get_prime_factors(n)
-    if len(factors) >= 2:
-        primes = [factor for factor in factors if is_prime(factor)]
-        if len(primes) >= 2:
-            return primes[:2]
-    return None
-
-def factorize_file(path):
+def fc():
+    """
+    function fc to search file to convert number and format n=p*q
+    """
     try:
-        with open(path) as f:
-            for line in f:
-                n = int(line.strip())
-                primes = find_two_primes(n)
-                if primes:
-                    print(f"{n}={primes[0]}*{primes[1]}")
-                else:
-                    print("Unable to find two prime factors.")
-                if time.time() - start_time > 5:
-                    print("Execution time exceeded the limit.")
-                    break
-    except FileNotFoundError:
-        print(f"File '{path}' not found.")
-    except ValueError:
-        print("Invalid data in the file.")
+        revfile = sys.argv[1]
+        with open(revfile) as f:
+            for revnumber in f:
+                revnumber = int(revnumber)
+                if revnumber % 2 == 0:
+                        print("{}={}*{}".format(revnumber, revnumber // 2, 2))
+                        continue
+                i = 3
+                while i < revnumber // 2:
+                    if revnumber % i == 0:
+                        print("{}={}*{}".format(revnumber, revnumber // i, i))
+                        break
+                    i = i + 2
+                if i == (revnumber // 2) + 1:
+                    print("{}={}*{}".format(revnumber, revnumber, 1))
+    except (IndexError):
+        pass
 
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        sys.exit(f"Usage: {sys.argv[0]} <path>")
 
-    factors = sys.argv[1]
-
-    start_time = time.time()
-
-    factorize_file(factors)
+fc()
