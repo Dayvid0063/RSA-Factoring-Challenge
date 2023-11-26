@@ -1,77 +1,72 @@
 #!/usr/bin/python3
 
 import sys
+import time
+import random
 import math
 
-
-def prime_digit(num):
-    """Check if a digit is prime"""
-    if num < 2:
+def is_prime(n):
+    if n < 2:
         return False
-    for k in range(2, int(math.sqrt(num)) + 1):
-        if num % k == 0:
+    for i in range(2, int(math.sqrt(n)) + 1):
+        if n % i == 0:
             return False
     return True
 
-def gcd(a, b):
-    """Calculate the greatest common divisor of two numbers"""
-    while b:
-        a, b = b, a % b
-    return a
-
-def pollards_p_minus_1(n):
-    """Pollard's p-1 algorithm for factorizing a number"""
-    max_bound = 1000000
-    a = 2
-    for j in range(2, max_bound):
-        a = pow(a, j, n)
-        d = gcd(a - 1, n)
-        if 1 < d < n:
-            return d, n // d
-        if d == n:
-            break
-
-    return None, None
-
 def pollard_rho(n):
-    """Pollard's rho algorithm for factorizing a number"""
     if n % 2 == 0:
-        return 2, n // 2
+        return 2
 
-    x = 2
-    y = 2
+    x = random.randint(1, n - 1)
+    y = x
+    c = random.randint(1, n - 1)
     d = 1
-    f = lambda val: (val * val + 1) % n
 
     while d == 1:
-        x = f(x)
-        y = f(f(y))
-        d = gcd(abs(x - y), n)
+        x = (x * x + c) % n
+        y = (y * y + c) % n
+        y = (y * y + c) % n
+        d = math.gcd(abs(x - y), n)
+
+    return d
+
+def find_prime_factors(n):
+    if n < 2:
+        return None, None
+
+    if is_prime(n):
+        return n, 1
+
+    d = pollard_rho(n)
+    if d == n:
+        return None, None
 
     return d, n // d
 
 def factorize_file(path):
-    """Factorizes digits in the provided file into two prime factors"""
     try:
         with open(path) as f:
-            n = int(f.read().strip())
+            for line in f:
+                n = int(line.strip())
+                p, q = find_prime_factors(n)
+                if p is not None and q is not None:
+                    print(f"{n}={p}*{q}")
+                else:
+                    print(f"Prime factors for {n} not found.")
 
-            p, q = pollards_p_minus_1(n)
-            if p is not None and q is not None and prime_digit(p) and prime_digit(q):
-                print(f"{n}={p}*{q}")
-                return
-
-            p, q = pollard_rho(n)
-            if p is not None and q is not None and prime_digit(p) and prime_digit(q):
-                print(f"{n}={p}*{q}")
-                return
-
-            print(f"Couldn't find two prime factors for {n}")
+                if time.time() - start_time > 5:
+                    print("Execution time exceeded the limit.")
+                    break
     except FileNotFoundError:
-        print("File not found.")
+        print(f"File '{path}' not found.")
+    except ValueError:
+        print("Invalid data in the file.")
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python rsa.py <filename>")
-    else:
-        factorize_file(sys.argv[1])
+        sys.exit(f"Usage: {sys.argv[0]} <path>")
+
+    factors = sys.argv[1]
+
+    start_time = time.time()
+    factorize_file(factors)
