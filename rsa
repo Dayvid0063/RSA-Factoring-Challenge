@@ -1,12 +1,63 @@
 #!/usr/bin/python3
 
-"""Find prime factors of a number"""
 import sys
 import time
+import random
 
+def gcd(a, b):
+    while b:
+        a, b = b, a % b
+    return a
+
+def rho_pollard(n):
+    if n % 2 == 0:
+        return 2
+
+    x = random.randint(1, n-1)
+    y = x
+    c = random.randint(1, n-1)
+    d = 1
+
+    f = lambda x: (x ** 2 + c) % n
+
+    while d == 1:
+        x = f(x)
+        y = f(f(y))
+        d = gcd(abs(x - y), n)
+
+    return d if d != n else None
+
+def factorize(n):
+    factors = []
+    while n > 1:
+        factor = rho_pollard(n)
+        if factor:
+            factors.append(factor)
+            n //= factor
+        else:
+            factors.append(n)
+            break
+    return factors
+
+def factorize_file(path):
+    try:
+        with open(path) as f:
+            for line in f:
+                n = int(line.strip())
+                factors = factorize(n)
+                if len(factors) == 2 and all(is_prime(factor) for factor in factors):
+                    print(f"{n}={factors[0]}*{factors[1]}")
+                else:
+                    print("Unable to find two prime factors.")
+                if time.time() - start_time > 5:
+                    print("Execution time exceeded the limit.")
+                    break
+    except FileNotFoundError:
+        print(f"File '{path}' not found.")
+    except ValueError:
+        print("Invalid data in the file.")
 
 def is_prime(n):
-    """Check if a number is prime"""
     if n <= 1:
         return False
     if n <= 3:
@@ -19,39 +70,6 @@ def is_prime(n):
             return False
         i += 6
     return True
-
-def prime_factors(n):
-    """Find prime factors of a number"""
-    factors = []
-    while n % 2 == 0:
-        factors.append(2)
-        n //= 2
-    for i in range(3, int(n**0.5) + 1, 2):
-        while n % i == 0:
-            factors.append(i)
-            n //= i
-    if n > 2:
-        factors.append(n)
-    return factors
-
-def factorize_file(path):
-    """Factorize a number into its prime factors"""
-    try:
-        with open(path) as f:
-            for line in f:
-                n = int(line.strip())
-                factors = prime_factors(n)
-                if len(factors) == 2 and is_prime(factors[0]) and is_prime(factors[1]):
-                    print(f"{n}={factors[0]}*{factors[1]}")
-                else:
-                    print("Unable to find two prime factors.")
-                if time.time() - start_time > 5:
-                    print("Execution time exceeded the limit.")
-                    break
-    except FileNotFoundError:
-        print(f"File '{path}' not found.")
-    except ValueError:
-        print("Invalid data in the file.")
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
